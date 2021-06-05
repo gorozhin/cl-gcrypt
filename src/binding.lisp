@@ -4,9 +4,10 @@
 ;;
 
 (defenum
-    (#.(lispify "GCRYCTL_FINALIZE" 'enumvalue) 5)
-    (#.(lispify "GCRYCTL_TEST_ALGO" 'enumvalue) 8)
-    (#.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue) 10))
+  (#.(lispify "GCRYCTL_FINALIZE" 'enumvalue) 5)
+  (#.(lispify "GCRYCTL_TEST_ALGO" 'enumvalue) 8)
+  (#.(lispify "GCRYCTL_IS_SECURE" 'enumvalue) 9)
+  (#.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue) 10))
 
 ;;;; MD module
 ;; types and structs
@@ -59,7 +60,8 @@
   #.(lispify "GCRY_MD_BLAKE2B_160" 'enumvalue)
   #.(lispify "GCRY_MD_BLAKE2S_256" 'enumvalue)
   #.(lispify "GCRY_MD_BLAKE2S_224" 'enumvalue)
-  #.(lispify "GCRY_MD_BLAKE2S_160" 'enumvalue))
+  #.(lispify "GCRY_MD_BLAKE2S_160" 'enumvalue)
+  #.(lispify "GCRY_MD_BLAKE2S_128" 'enumvalue))
 
 (defenum
   (#.(lispify "GCRY_MD_FLAG_SECURE" 'enumvalue) 1)
