@@ -1,0 +1,55 @@
+name: Tests
+on:
+  push:
+    branches:
+  pull_request:
+    branches:
+jobs:
+  test:
+    name: ${{ matrix.lisp }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        lisp: [sbcl-bin, ccl]
+        os: [ ubuntu-latest, macos-latest ]
+        
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache .roswell
+        id: cache-dot-roswell
+        uses: actions/cache@v1
+        with:
+          path: ~/.roswell
+          key: ${{ runner.os }}-dot-roswell-${{ matrix.lisp }}-${{ hashFiles('**/*.asd') }}
+          restore-keys: |
+            ${{ runner.os }}-dot-roswell-${{ matrix.lisp }}-
+            ${{ runner.os }}-dot-roswell-
+      - name: install roswell
+        shell: bash
+        env:
+          LISP: ${{ matrix.lisp }}
+        run: curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      - name: run lisp
+        continue-on-error: false
+        shell: bash
+        run: |
+          ros -e '(format t "~a:~a on ~a~%...~%~%" (lisp-implementation-type) (lisp-implementation-version) (machine-type))'
+          ros -e '(format t " fixnum bits:~a~%" (integer-length most-positive-fixnum))'
+          ros -e "(ql:quickload 'trivial-features)" -e '(format t "features = ~s~%" *features*)'
+      - name: Install dependencies ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libgcrypt20
+      - name: Install dependencies macos
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          brew install libgcrypt
+      - name: load code and run tests
+        shell: bash
+        env:
+          CL_GCRYPT_EXIT_ON_FAIL: true
+        run: |
+          ros -e '(handler-bind (#+asdf3.2(asdf:bad-SYSTEM-NAME (function MUFFLE-WARNING))) (handler-case (ql:quickload :cl-gcrypt-test) (error (a) (format t "caught error ~s~%~a~%" a a) (uiop:quit 123))))' -e '(asdf:test-system "cl-gcrypt-test")'

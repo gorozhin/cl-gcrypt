@@ -1,14 +1,5 @@
 (in-package :cl-gcrypt)
 
-;;;; control
-;;
-
-(defenum
-  (#.(lispify "GCRYCTL_FINALIZE" 'enumvalue) 5)
-  (#.(lispify "GCRYCTL_TEST_ALGO" 'enumvalue) 8)
-  (#.(lispify "GCRYCTL_IS_SECURE" 'enumvalue) 9)
-  (#.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue) 10))
-
 ;;;; MD module
 ;; types and structs
 (cffi:defcstruct #.(lispify "gcry_md_handle" 'type)
@@ -17,7 +8,6 @@
   (bufsize :int)
   (buf :char :count 1))
 (cffi:defctype #.(lispify "gcry_md_hd_t" 'type) :pointer)
-(cffi:defctype #.(lispify "gcry_error_t" 'type) :uint)
 (cffi:defcstruct #.(lispify "gcry_buffer_t" 'type)
   (size :size)
   (off :size)

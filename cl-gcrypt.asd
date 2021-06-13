@@ -9,8 +9,11 @@
   :depends-on (:cffi)
   :components ((:module "src"
 		:components
-		((:file "binding" :depends-on ("cl-gcrypt" "helper"))
-		 (:file "export" :depends-on ("binding" "helper"))
+		
+		((:file "md-binding" :depends-on ("cl-gcrypt" "helper"))
+		 (:file "md-export" :depends-on ("md-binding" "helper"))
+		 (:file "cipher-binding" :depends-on ("cl-gcrypt" "helper"))
+		 (:file "cipher-export" :depends-on ("cipher-binding" "helper"))
 		 (:file "cl-gcrypt" :depends-on ("helper"))
 		 (:file "helper"))))
   :description "Common Lisp bindings for libgcrypt")

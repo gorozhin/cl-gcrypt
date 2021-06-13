@@ -1,11 +1,8 @@
-(in-package #:cl-user)
-(uiop:define-package #:cl-gcrypt-test
-  (:use #:cl #:cl-gcrypt #:cffi #:fiveam #:alexandria #:babel)
-  (:export #:cl-gcrypt-test-suite))
 (in-package #:cl-gcrypt-test)
-(def-suite cl-gcrypt-suite
-  :description "Tests")
-(in-suite cl-gcrypt-suite)
+
+(def-suite cl-gcrypt-md-suite
+  :description "Message digest tests")
+(in-suite cl-gcrypt-md-suite)
 
 (defun perform-simple-hash-test
     (algo expected &key (string "cl-gcrypt") (flags 0))
@@ -61,17 +58,6 @@
 		  `(perform-buffered-hash-test ,algo
 					       ,expected
 					       ,@others))))
-
-(defun foreign-buffer-to-string (buffer length)
-  (unless (null-pointer-p buffer)
-    (progn
-      "adf"
-      (let ((stream (make-string-output-stream)))
-	(loop for index
-   	      below length
-   	      do (format stream "~2,'0x"		   
-   			 (mem-aref buffer :uchar index)))
-	(string-downcase (get-output-stream-string stream))))))
 
 (test simple-hash
   (perform-simple-hash-test-cases
@@ -408,8 +394,7 @@
 	 (foreign-string-length
 	   (foreign-funcall "strlen"
 			    :string foreign-string
-			    :int))
-	 (algo-digest-len (gcry-md-get-algo-dlen algo)))
+			    :int)))
     (with-foreign-object (handle-pointer :pointer)
       (gcry-md-open handle-pointer algo flags)
       (let ((handle (mem-aref handle-pointer 'gcry-md-hd-t)))

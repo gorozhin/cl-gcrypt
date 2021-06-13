@@ -4,10 +4,17 @@
 (in-package :cl-gcrypt-test-asd)
 
 (defun run-tests ()
-  (when (not (symbol-call
-	      :fiveam '#:run!
-	      (intern* 'cl-gcrypt-suite '#:cl-gcrypt-test)))
-    (and (uiop:getenvp "CL_GCRYPT_EXIT_ON_FAIL") (uiop:quit 123))))
+  (let ((suites
+	  (list (intern* 'cl-gcrypt-cipher-suite '#:cl-gcrypt-test)
+		(intern* 'cl-gcrypt-md-suite '#:cl-gcrypt-test))))
+    (when (not (reduce
+		#'(lambda (x y) (and x y))
+		(loop for suite in suites
+		      collecting (symbol-call
+				  :fiveam '#:run! suite))
+		:initial-value t))
+      (and (uiop:getenvp "CL_GCRYPT_EXIT_ON_FAIL")
+	   (uiop:quit 123)))))
 
 (defsystem cl-gcrypt-test
   :version "0.0.1"
@@ -17,7 +24,9 @@
   :description "Common Lisp bindings for libgcrypt test suite"
   :components((:module "t"
 	       :components
-	       ((:file "test"))))
+	       ((:file "cl-gcrypt-test")
+		(:file "md" :depends-on ("cl-gcrypt-test"))
+		(:file "cipher-test" :depends-on ("cl-gcrypt-test")))))
   :perform (test-op (o c)
 		    (run-tests)))
 
