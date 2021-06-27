@@ -1,10 +1,5 @@
 (in-package :cl-gcrypt)
 
-(export '#.(lispify "GCRYCTL_TEST_ALGO" 'enumvalue))
-(export '#.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue))
-(export '#.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue))
-(export '#.(lispify "GCRYCTL_IS_SECURE" 'enumvalue))
-
 (export '#.(lispify "gcry_md_hd_t" 'type))
 (export '#.(lispify "gcry_md_handle" 'type))
 (export '#.(lispify "gcry_error_t" 'type))
