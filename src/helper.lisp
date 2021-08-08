@@ -5,7 +5,9 @@
    :lispify
    :enumvalue
    :constant
-   :defenum))
+   :defenum
+   :namify-function
+   :namify-function-definition))
 (in-package :cl-gcrypt.helper)
 
 (cl:defmacro defenum (cl:&rest definitions)
@@ -68,4 +70,8 @@
 				  cl:nil
 				  cl:nil))
 			 fix)
-	 package)))))
+	 package))))
+  
+  (cl:defun namify-function (name) (lispify name 'function))
+  (cl:defun namify-function-definition (name)
+    (list name (namify-function name))))

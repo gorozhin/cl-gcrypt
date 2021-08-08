@@ -47,7 +47,7 @@
   #.(lispify "GCRY_CIPHER_MODE_CFB8" 'enumvalue)
   #.(lispify "GCRY_CIPHER_MODE_XTS" 'enumvalue))
 
-(cffi:defcfun #.(lispify "gcry_cipher_open" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_open")
   #.(lispify "gcry_error_t" 'type)
   "Create a handle for algorithm ALGO to be used in MODE. FLAGS may
 be given as an bitwise OR of the gcry_cipher_flags values."
@@ -56,19 +56,19 @@ be given as an bitwise OR of the gcry_cipher_flags values."
   (mode :int)
   (flags :uint))
 
-(cffi:defcfun #.(lispify "gcry_cipher_close" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_close")
   :void
   "Close the cipher handle HANDLE and release all resource."
   (handle #.(lispify "gcry_cipher_hd_t" 'type)))
 
-(cffi:defcfun #.(lispify "gcry_cipher_setkey" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_setkey")
   #.(lispify "gcry_error_t" 'type)
   "Set KEY of length KEYLEN bytes for the cipher handle HANDLE."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (key :pointer)
   (keylen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_encrypt" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_encrypt")
   #.(lispify "gcry_error_t" 'type)
   "Encrypt the plaintext of size INLEN in IN using the cipher handle HANDLE
 into the buffer OUT which has an allocated length of OUTSIZE. For
@@ -80,48 +80,48 @@ and do a in-place decryption of the data provided in OUT."
   (in :pointer)
   (inlen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_decrypt" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_decrypt")
   #.(lispify "gcry_error_t" 'type)
   #.(format nil
 	    "The counterpart to ~a."
-	    '#.(lispify "gcry_cipher_encrypt" 'function))
+	    '#.(namify-function "gcry_cipher_encrypt"))
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (out :pointer)
   (outsize :size)
   (in :pointer)
   (inlen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_get_algo_keylen" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_get_algo_keylen")
   :size
   "Retrieve the key length in bytes used with algorithm ALGO."
   (algo :int))
 
-(cffi:defcfun #.(lispify "gcry_cipher_get_algo_blklen" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_get_algo_blklen")
   :size
   "Retrieve the block length in bytes used with algorithm ALGO."
   (algo :int))
 
-(cffi:defcfun #.(lispify "gcry_cipher_algo_name" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_algo_name")
   :string
   "Map the cipher algorithm whose ID is contained in ALGO to a
 string representation of the algorithm name.  For unknown algorithm
 IDs this function returns \"?\"."
   (algo :int))
 
-(cffi:defcfun #.(lispify "gcry_cipher_map_name" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_map_name")
   :int
   "Map the algorithm name NAME to an cipher algorithm ID.
 Return 0 if the algorithm name is not known."
   (name :string))
 
-(cffi:defcfun #.(lispify "gcry_cipher_mode_from_oid" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_mode_from_oid")
   :int
   "Given an ASN.1 object identifier in standard IETF dotted decimal
 format in STRING, return the encryption mode associated with that
 OID or 0 if not known or applicable."
   (string :string))
 
-(cffi:defcfun #.(lispify "gcry_cipher_info" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_info")
   #.(lispify "gcry_error_t" 'type)
   "Retrieve various information about the cipher object HANDLE."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
@@ -129,7 +129,7 @@ OID or 0 if not known or applicable."
   (buffer :pointer)
   (nbytes :pointer))
 
-(cffi:defcfun #.(lispify "gcry_cipher_algo_info" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_algo_info")
   #.(lispify "gcry_error_t" 'type)
   "Retrieve various information about the cipher algorithm ALGO."
   (algo :int)
@@ -137,15 +137,15 @@ OID or 0 if not known or applicable."
   (buffer :pointer)
   (nbytes :pointer))
 
-(defun #.(lispify "gcry_cipher_test_algo" 'function) (algo)
+(defun #.(namify-function "gcry_cipher_test_algo") (algo)
   "Return 0 if the algorithm ALGO is available for use."
-  (#.(lispify "gcry_cipher_algo_info" 'function)
+  (#.(namify-function "gcry_cipher_algo_info")
      algo
      #.(lispify "GCRYCTL_TEST_ALGO" 'enumvalue)
      (cffi:null-pointer)
      (cffi:null-pointer)))
 
-(cffi:defcfun #.(lispify "gcry_cipher_ctl" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_ctl")
   #.(lispify "gcry_error_t" 'type)
   "Perform various operations on the cipher object HANDLE."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
@@ -153,43 +153,43 @@ OID or 0 if not known or applicable."
   (buffer :pointer)
   (buflen :size))
 
-(defun #.(lispify "gcry_cipher_reset" 'function) (handle)
+(defun #.(namify-function "gcry_cipher_reset") (handle)
   "Reset the handle to the state after open."
-  (#.(lispify "gcry_cipher_ctl" 'function)
+  (#.(namify-function "gcry_cipher_ctl")
      handle
      +gcryctl-reset+
      (cffi:null-pointer)
      0))
 
-(cffi:defcfun #.(lispify "gcry_cipher_setiv" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_setiv")
   #.(lispify "gcry_error_t" 'type)
   "Set initialization vector IV of length IVLEN for the cipher handle HANDLE."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (iv :pointer)
   (ivlen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_gettag" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_gettag")
   #.(lispify "gcry_error_t" 'type)
   "Get authentication tag for AEAD modes/ciphers."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (outtag :pointer)
   (taglen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_authenticate" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_authenticate")
   #.(lispify "gcry_error_t" 'type)
   "Provide additional authentication data for AEAD modes/ciphers."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (abuf :pointer)
   (abuflen :size))
 
-(cffi:defcfun #.(lispify "gcry_cipher_checktag" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_checktag")
   #.(lispify "gcry_error_t" 'type)
   "Check authentication tag for AEAD modes/ciphers."
   (handle #.(lispify "gcry_cipher_hd_t" 'type))
   (intag :pointer)
   (taglen :size))
 
-(defun #.(lispify "gcry_cipher_final" 'function) (a)
+(defun #.(namify-function "gcry_cipher_final") (a)
   "Indicate to the encrypt and decrypt functions that the
 next call provides the final data.  Only used with some modes."
   (#.(lispify "gcry_cipher_ctl" 'funcation)
@@ -198,7 +198,7 @@ next call provides the final data.  Only used with some modes."
      (cffi:null-pointer)
      0))
 
-(cffi:defcfun #.(lispify "gcry_cipher_setctr" 'function)
+(cffi:defcfun #.(namify-function-definition "gcry_cipher_setctr")
   #.(lispify "gcry_error_t" 'type)
   "Set counter for CTR mode.  (CTR,CTRLEN) must denote a buffer of
 block size length, or (NULL,0) to set the CTR to the all-zero block."
@@ -206,25 +206,25 @@ block size length, or (NULL,0) to set the CTR to the all-zero block."
   (ctr :pointer)
   (ctrlen :size))
 
-(defun #.(lispify "gcry_cipher_sync" 'function) (handle)
+(defun #.(namify-function "gcry_cipher_sync") (handle)
   "Perform the OpenPGP sync operation if this is enabled 
 for the cipher handle HANDLE."
-  (#.(lispify "gcry_cipher_ctl" 'function)
+  (#.(namify-function "gcry_cipher_ctl")
      handle
      #.(lispify "GCRYCTL_CFB_SYNC" 'enumvalue)
      (cffi:null-pointer)
      0))
 
-(defun #.(lispify "gcry_cipher_cts" 'function) (handle on)
+(defun #.(namify-function "gcry_cipher_cts") (handle on)
   "Enable or disable CTS in future calls to gcry_encrypt(). CBC mode only."
-  (#.(lispify "gcry_cipher_ctl" 'function)
+  (#.(namify-function "gcry_cipher_ctl")
      handle
      #.(lispify "GCRYCTL_SET_CBC_CTS" 'enumvalue)
      (cffi:null-pointer)
      on))
     
-(defun #.(lispify "gcry_cipher_set_sbox" 'function) (handle oid)
-  (#.(lispify "gcry_cipher_ctl" 'function)
+(defun #.(namify-function "gcry_cipher_set_sbox") (handle oid)
+  (#.(namify-function "gcry_cipher_ctl")
      handle
      #.(lispify "GCRYCTL_SET_SBOX" 'enumvalue)
      oid
