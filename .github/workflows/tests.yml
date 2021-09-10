@@ -5,13 +5,37 @@ on:
   pull_request:
     branches:
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache .roswell
+        id: cache-dot-roswell
+        uses: actions/cache@v1
+        with:
+          path: ~/.roswell
+          key: ubuntu-latest-dot-roswell-sbcl-${{ hashFiles('**/*.asd') }}
+          restore-keys: |
+            ubuntu-latest-dot-roswell-sbcl-
+            ubuntu-latest-dot-roswell-
+      - name: install roswell              
+        shell: bash
+        env:
+          LISP: sbcl
+        run: curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      - name: load code and run tests
+        shell: bash
+        env:
+          CL_GCRYPT_EXIT_ON_FAIL: true
+        run: |
+          ros install cxxxr/sblint
+          /home/runner/.roswell/bin/sblint
   test:
     name: ${{ matrix.lisp }} on ${{ matrix.os }}
     strategy:
       matrix:
         lisp: [sbcl-bin, ccl]
         os: [ ubuntu-latest, macos-latest ]
-        
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
