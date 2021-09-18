@@ -4,7 +4,7 @@
   :description "Message digest tests")
 (in-suite cl-gcrypt-md-suite)
 
-(defun perform-simple-hash-test
+(defun perform-simple-hash-test    
     (algo expected &key (string "cl-gcrypt") (flags 0))
   (let* ((foreign-string (convert-to-foreign string :string))
 	 (foreign-string-length
@@ -60,6 +60,10 @@
 					       ,@others))))
 
 (test simple-hash
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (perform-simple-hash-test-cases
    (+gcry-md-md-5+ "828560813092bf2f8eedf55dd99df999")
    (+gcry-md-sha-1+ "db3787abcf47c4783f9f520258f3f5cee4c2ddb4")
@@ -95,32 +99,50 @@
    (+gcry-md-blake-2-s-256+ "a6d8c508ae9badf542f646e7cbdd9080946a7417314ee1022e72c997b9d21aaf")
    (+gcry-md-blake-2-s-224+ "5f297cf66ac5cad9dc3c81b8922a4c6b79f8fd04a0a402054e9a03cf")
    (+gcry-md-blake-2-s-160+ "6806a27aca24eb897e3608d4744177d3be88990c")
-   (+gcry-md-blake-2-s-128+ "1eb752c0295d7a8d9c7a78745c643c73")
-   ;; prep for 1.9 version that's not available on ubuntu runner
-   ;; (+gcry-md-sm-3+ "f072dc24030762ff74aa2cd38a645e7c3f41378814078019ff8ca4e5473ea380")
-   ;; (+gcry-md-sha-512-224+ "b17e9100bd47710919f63881fdc1a7faaefc54a253d3c1948be5d8e6")
-   ;; (+gcry-md-sha-512-256+ "239337abfc8a43300bbb4e17072280c87719a29047b8f0a02ae4b7656be5f1a3")
-   ))
+   (+gcry-md-blake-2-s-128+ "1eb752c0295d7a8d9c7a78745c643c73"))
+  
+  (when (gcry-check-version "1.9.0")
+    (perform-simple-hash-test-cases
+   (+gcry-md-sm-3+ "f072dc24030762ff74aa2cd38a645e7c3f41378814078019ff8ca4e5473ea380")
+   (+gcry-md-sha-512-224+ "b17e9100bd47710919f63881fdc1a7faaefc54a253d3c1948be5d8e6")
+   (+gcry-md-sha-512-256+ "239337abfc8a43300bbb4e17072280c87719a29047b8f0a02ae4b7656be5f1a3"))))
 
 (test simple-hash-secure-memory
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
+  
   (perform-simple-hash-test-cases
    (+gcry-md-md-5+ "828560813092bf2f8eedf55dd99df999" :flags +gcry-md-flag-secure+)
    (+gcry-md-sha-1+ "db3787abcf47c4783f9f520258f3f5cee4c2ddb4" :flags +gcry-md-flag-secure+)
    (+gcry-md-whirlpool+ "fcc7281ccd60ec9c00fb80d0ae3288aec877e30a81ced91bb6c4cbbdd4297f283ee557709b4d73724f4a80219c3691e1686879f8547604a85c76e412768faf6b" :flags +gcry-md-flag-secure+)))
 
 (test buffered-hash
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (perform-buffered-hash-test-cases
    (+gcry-md-md-5+ "828560813092bf2f8eedf55dd99df999")
    (+gcry-md-sha-1+ "db3787abcf47c4783f9f520258f3f5cee4c2ddb4")
    (+gcry-md-whirlpool+ "fcc7281ccd60ec9c00fb80d0ae3288aec877e30a81ced91bb6c4cbbdd4297f283ee557709b4d73724f4a80219c3691e1686879f8547604a85c76e412768faf6b")))
 
 (test buffered-hash-secure-memory
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (perform-buffered-hash-test-cases
    (+gcry-md-md-5+ "828560813092bf2f8eedf55dd99df999" :flags +gcry-md-flag-secure+)
    (+gcry-md-sha-1+ "db3787abcf47c4783f9f520258f3f5cee4c2ddb4" :flags +gcry-md-flag-secure+)
    (+gcry-md-whirlpool+ "fcc7281ccd60ec9c00fb80d0ae3288aec877e30a81ced91bb6c4cbbdd4297f283ee557709b4d73724f4a80219c3691e1686879f8547604a85c76e412768faf6b" :flags +gcry-md-flag-secure+)))
 
 (test is-enabled-is-secure-test
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (with-foreign-objects ((secure-handle-pointer :pointer)
 			 (non-secure-handle-pointer :pointer))
     (gcry-md-open secure-handle-pointer
@@ -139,6 +161,10 @@
       (gcry-md-close non-secure-handle))))
 
 (test re-enable
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (flags 0)
 	 (algo +gcry-md-none+)
@@ -165,6 +191,10 @@
       (foreign-free foreign-string)))
 
 (test multiple-enable
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (flags 0)
 	 (algo +gcry-md-md-5+)
@@ -196,10 +226,18 @@
 	(gcry-md-close handle)))))
 
 (test algo-name-back-and-forth
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let ((algo +gcry-md-md-5+))
     (is (= (gcry-md-map-name (gcry-md-algo-name algo)) algo))))
 
 (test reset
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((some-other-string "some-other-string")
 	 (string "cl-gcrypt")
 	 (algo +gcry-md-md-5+)
@@ -237,11 +275,19 @@
     (foreign-free some-other-foreign-string)))
 
 (test algo-available
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (is (= 0 (gcry-md-test-algo +gcry-md-md-5+)))
   (is (not (= 0 (gcry-md-test-algo +gcry-md-md-2+))))
   (is (not (= 0 (gcry-md-test-algo 1000)))))
 
 (test hash-buffer
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-md-md-5+)
 	 (string "cl-gcrypt")
 	 (foreign-string (convert-to-foreign string :string))
@@ -258,6 +304,10 @@
     (foreign-free digest)))
 
 (test get-algo
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-md-md-5+)
 	 (flags 0))
     (with-foreign-object (handle-pointer :pointer)
@@ -268,6 +318,10 @@
 	(gcry-md-close handle)))))
 
 (test test-ctl
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (algo +gcry-md-md-5+)
 	 (flags 0)
@@ -290,6 +344,10 @@
 
 
 (test hash-buffers
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-md-md-5+)
 	 (str "cl-g")
 	 (str1 "crypt")		 
@@ -348,6 +406,10 @@
     (foreign-free digest)))
 
 (test get-asnoid
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let ((buffer (cffi:foreign-alloc :uchar :initial-element 0 :count 100))
 	(size (cffi:foreign-alloc :size :initial-element 100)))
 
@@ -363,6 +425,10 @@
     (cffi:foreign-free size)))
 
 (test copy
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (flags 0)
 	 (algo +gcry-md-md-5+)
@@ -392,6 +458,10 @@
 
 
 (test extended-output-algo
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (algo +gcry-md-shake-128+)
 	 (flags 0)
@@ -430,6 +500,10 @@
     (foreign-free foreign-string)))
 
 (test hmac
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((string "cl-gcrypt")
 	 (algo +gcry-md-md-5+)
 	 (flags +gcry-md-flag-hmac+)
@@ -462,6 +536,10 @@
     (foreign-free foreign-secret-key)))
 
 (test is-secure-via-info
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (with-foreign-objects ((secure-handle-pointer :pointer)
 			 (non-secure-handle-pointer :pointer))
     (gcry-md-open secure-handle-pointer

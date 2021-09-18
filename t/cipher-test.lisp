@@ -23,6 +23,10 @@
     (values new-length new-buffer))))
 
 (test simple
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-cipher-aes+)
 	 (flags 0)
 	 (string "cl-gcrypt")
@@ -133,6 +137,10 @@
     (foreign-free foreign-secret-key)))
 
 (test all
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (loop for (cipher expected string secret-key cipher-mode)
 	  in
 	  (list
@@ -171,6 +179,10 @@
 			    cipher-mode))))
 
 (test name-id-reversable
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-cipher-blowfish+)
 	 (non-existent-algo 999999)
 	 (name-from-algo (gcry-cipher-algo-name algo))
@@ -182,14 +194,26 @@
     (is (= 0 (gcry-cipher-map-name name-from-non-existent-algo)))))
 
 (test oid
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (is (= (gcry-cipher-mode-from-oid "1.2.840.113549.3.7")
 	 +gcry-cipher-mode-cbc+)))
 
 (test algo-available
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (is (= (gcry-cipher-test-algo +gcry-cipher-blowfish+) 0))
   (is (not (= (gcry-cipher-test-algo 1231231) 0))))
 
 (test initialization-vector-reset
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-cipher-aes+)
 	 (cipher-mode +gcry-cipher-mode-cfb+)
 	 (string "cl-gcrypt")
@@ -284,6 +308,10 @@
     (foreign-free foreign-iv)))
 
 (test get-tag
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-cipher-chacha-20+)
 	 (cipher-mode +gcry-cipher-mode-poly-1305+)
 	 (string "cl-gcrypt")
@@ -352,8 +380,11 @@
     (foreign-free foreign-string)
     (foreign-free foreign-secret-key)))
 
-
 (test authenticate
+  (unless (gcry-check-version "1.8.0")
+    (error "Unsupported gcrypt version"))
+  (gcry-control +gcryctl-initialization-finished+
+		:int 0)
   (let* ((algo +gcry-cipher-chacha-20+)
 	 (cipher-mode +gcry-cipher-mode-poly-1305+)
 	 (string "cl-gcrypt")
