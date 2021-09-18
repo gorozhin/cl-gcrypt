@@ -74,8 +74,7 @@
     (foreign-free foreign-secret-key)))
 
 (defun test-one-algo (algo expected string secret-key cipher-mode)
-  (let* (
-	 (block-length (gcry-cipher-get-algo-blklen algo))
+  (let* ((block-length (gcry-cipher-get-algo-blklen algo))
 	 (key-length (gcry-cipher-get-algo-keylen algo))
 	 (flags 0)
 	 (foreign-string (convert-to-foreign string :string))
@@ -120,13 +119,11 @@
 		   (foreign-buffer-to-string encrypted-buffer
 					     padded-string-length)
 		   expected))
-	      
 	      (is (string=
 		   (foreign-buffer-to-string decrypted-buffer
 					     foreign-string-length)
 		   (foreign-buffer-to-string foreign-string
 					     foreign-string-length)))
-	      
 	      (foreign-free encrypted-buffer)
 	      (foreign-free decrypted-buffer))
 	    (foreign-free padded-string))
@@ -139,35 +136,34 @@
   (loop for (cipher expected string secret-key cipher-mode)
 	  in
 	  (list
-	   (list +gcry-cipher-3-des+
-		 "9810ddcfda315d83ad2998b8b90c82e5"
-		 nil
-		 "@U*(Y!@$OFB!HF@*HUS)")
-	   (list +gcry-cipher-aes+ "0b8f6e33e14b0bfe9477fe380702c743")
-	   (list +gcry-cipher-aes-192+ "af7c91211b68d7c7934d0a875ce0e235")
-	   (list +gcry-cipher-aes-256+ "82443d28ac548774f36e6a8cbecf58c8")
-	   (list +gcry-cipher-blowfish+ "cffe62eaf7ac06ccd7a680b72dbaaca9")
-	   (list +gcry-cipher-camellia-128+ "b6cd1bf11434a2030e878a443aff6876")
-	   (list +gcry-cipher-camellia-192+ "f0975f93c073cb361262f59eca58ee5d")
-	   (list +gcry-cipher-camellia-256+ "5281fa4d9b2195274cecd7b0015cfd39")
-	   (list +gcry-cipher-cast-5+ "6faa061299c61b48d8df62c918b516b3")
-	   (list +gcry-cipher-des+
+	   `(,+gcry-cipher-3-des+
+	     "9810ddcfda315d83ad2998b8b90c82e5"
+	     nil
+	     "@U*(Y!@$OFB!HF@*HUS)")
+	   `(,+gcry-cipher-aes+ "0b8f6e33e14b0bfe9477fe380702c743")
+	   `(,+gcry-cipher-aes-192+ "af7c91211b68d7c7934d0a875ce0e235")
+	   `(,+gcry-cipher-aes-256+ "82443d28ac548774f36e6a8cbecf58c8")
+	   `(,+gcry-cipher-blowfish+ "cffe62eaf7ac06ccd7a680b72dbaaca9")
+	   `(,+gcry-cipher-camellia-128+ "b6cd1bf11434a2030e878a443aff6876")
+	   `(,+gcry-cipher-camellia-192+ "f0975f93c073cb361262f59eca58ee5d")
+	   `(,+gcry-cipher-camellia-256+ "5281fa4d9b2195274cecd7b0015cfd39")
+	   `(,+gcry-cipher-cast-5+ "6faa061299c61b48d8df62c918b516b3")
+	   `(,+gcry-cipher-des+
 		 "f80231cca24dbf5e65b7c78833ab7cb9"
 		 nil
 		 "@U*($")
-	   (list +gcry-cipher-gost-28147+ "55d505738ccf30684e02e9caf33424af")
-	   (list +gcry-cipher-rfc-2268-128+ "fc762181eb3b5eb9f85b55e7b1b0a9f1")
-	   (list +gcry-cipher-rfc-2268-40+ "b82a3e849d9ae1f5a437b0596821a8be") 
-	   (list +gcry-cipher-seed+ "75e5ace689f753ed07159605e67bf9e4")
-	   (list +gcry-cipher-serpent-128+ "105720771533c7ee80b25edc398b7fe3")
-	   (list +gcry-cipher-serpent-192+ "d6024543d455e2319473b178a5a98e2c")
-	   (list +gcry-cipher-serpent-256+ "ac1ce037b887e52281c296ab1294163c")
-	   (list +gcry-cipher-twofish+ "bdcff0fdfc623312aee34219b92644e0")
-	   (list +gcry-cipher-twofish-128+ "eca077fd6ab6d03713f3fed003c8248b")
-	   )
+	   `(,+gcry-cipher-gost-28147+ "55d505738ccf30684e02e9caf33424af")
+	   `(,+gcry-cipher-rfc-2268-128+ "fc762181eb3b5eb9f85b55e7b1b0a9f1")
+	   `(,+gcry-cipher-rfc-2268-40+ "b82a3e849d9ae1f5a437b0596821a8be") 
+	   `(,+gcry-cipher-seed+ "75e5ace689f753ed07159605e67bf9e4")
+	   `(,+gcry-cipher-serpent-128+ "105720771533c7ee80b25edc398b7fe3")
+	   `(,+gcry-cipher-serpent-192+ "d6024543d455e2319473b178a5a98e2c")
+	   `(,+gcry-cipher-serpent-256+ "ac1ce037b887e52281c296ab1294163c")
+	   `(,+gcry-cipher-twofish+ "bdcff0fdfc623312aee34219b92644e0")
+	   `(,+gcry-cipher-twofish-128+ "eca077fd6ab6d03713f3fed003c8248b"))
 	do (let ((string (or string "cl-gcrypt"))
 		 (secret-key (or secret-key "secret-key"))
-		 (cipher-mode (or cipher-mode 1)))
+		 (cipher-mode (or cipher-mode +gcry-cipher-mode-ecb+)))
 	     (test-one-algo cipher
 			    expected
 			    string
@@ -452,7 +448,6 @@
 					       foreign-tag
 					       foreign-tag-length)
 			 0))
-		  
 		  (foreign-free foreign-tag))) 
 	      (foreign-free encrypted-buffer)
 	      (foreign-free decrypted-buffer))

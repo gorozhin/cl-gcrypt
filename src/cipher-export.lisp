@@ -1,4 +1,4 @@
-(in-package :cl-gcrypt)
+(in-package #:cl-gcrypt)
 
 (export '#.(lispify "gcry_cipher_hd_t" 'type))
 
@@ -29,7 +29,8 @@
 (export '#.(lispify "GCRY_CIPHER_SALSA20R12" 'enumvalue))
 (export '#.(lispify "GCRY_CIPHER_GOST28147" 'enumvalue))
 (export '#.(lispify "GCRY_CIPHER_CHACHA20" 'enumvalue))
-
+(export '#.(lispify "GCRY_CIPHER_GOST28147_MESH" 'enumvalue))
+(export '#.(lispify "GCRY_CIPHER_SM4" 'enumvalue))
 
 (export '#.(lispify "GCRY_CIPHER_MODE_NONE" 'enumvalue))
 (export '#.(lispify "GCRY_CIPHER_MODE_ECB" 'enumvalue))
@@ -45,6 +46,7 @@
 (export '#.(lispify "GCRY_CIPHER_MODE_OCB" 'enumvalue))
 (export '#.(lispify "GCRY_CIPHER_MODE_CFB8" 'enumvalue))
 (export '#.(lispify "GCRY_CIPHER_MODE_XTS" 'enumvalue))
+(export '#.(lispify "GCRY_CIPHER_MODE_EAX" 'enumvalue))
 
 (export '#.(namify-function "gcry_cipher_open"))
 (export '#.(namify-function "gcry_cipher_setkey"))

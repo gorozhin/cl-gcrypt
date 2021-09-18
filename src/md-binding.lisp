@@ -1,4 +1,4 @@
-(in-package :cl-gcrypt)
+(in-package #:cl-gcrypt)
 
 ;;;; MD module
 ;; types and structs

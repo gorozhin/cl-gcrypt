@@ -1,7 +1,7 @@
-(in-package :cl-user)
-(uiop:define-package cl-gcrypt-test-asd
+(in-package #:cl-user)
+(uiop:define-package #:cl-gcrypt-test-asd
     (:use #:cl #:asdf #:uiop))
-(in-package :cl-gcrypt-test-asd)
+(in-package #:cl-gcrypt-test-asd)
 
 (defun run-tests ()
   (let ((suites

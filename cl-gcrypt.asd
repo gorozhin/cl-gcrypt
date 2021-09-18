@@ -1,15 +1,14 @@
-(in-package :cl-user)
-(defpackage cl-gcrypt-asd (:use :cl :asdf))
-(in-package :cl-gcrypt-asd)
+(in-package #:cl-user)
+(defpackage cl-gcrypt-asd (:use #:cl #:asdf))
+(in-package #:cl-gcrypt-asd)
 
 (defsystem cl-gcrypt
   :version "0.0.1"
   :author "Mikhail Gorozhin <m.gorozhin at gmail.com>"
   :license "LGPLv2.1"
-  :depends-on (:cffi)
+  :depends-on (#:cffi)
   :components ((:module "src"
 		:components
-		
 		((:file "md-binding" :depends-on ("cl-gcrypt" "helper"))
 		 (:file "md-export" :depends-on ("md-binding" "helper"))
 		 (:file "cipher-binding" :depends-on ("cl-gcrypt" "helper"))

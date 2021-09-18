@@ -1,4 +1,4 @@
-(in-package :cl-gcrypt)
+(in-package #:cl-gcrypt)
 
 (export '#.(lispify "gcry_md_hd_t" 'type))
 (export '#.(lispify "gcry_md_handle" 'type))
