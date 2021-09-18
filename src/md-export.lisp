@@ -45,7 +45,10 @@
 (export '#.(lispify "GCRY_MD_BLAKE2S_256" 'enumvalue))
 (export '#.(lispify "GCRY_MD_BLAKE2S_224" 'enumvalue))
 (export '#.(lispify "GCRY_MD_BLAKE2S_160" 'enumvalue))
-(export '#.(lispify "GCRY_MD_BLAKE2S_128" 'enumvalue))
+ (export '#.(lispify "GCRY_MD_BLAKE2S_128" 'enumvalue))
+(export '#.(lispify "GCRY_MD_SM3" 'enumvalue))
+(export '#.(lispify "GCRY_MD_SHA512_256" 'enumvalue))
+(export '#.(lispify "GCRY_MD_SHA512_224" 'enumvalue))
 
 ;; flags
 (export '#.(lispify "GCRY_MD_FLAG_SECURE" 'enumvalue))

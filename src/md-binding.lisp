@@ -1,19 +1,6 @@
 (in-package #:cl-gcrypt)
 
 ;;;; MD module
-;; types and structs
-(cffi:defcstruct #.(lispify "gcry_md_handle" 'type)
-  (ctx :pointer)
-  (bufpos :int)
-  (bufsize :int)
-  (buf :char :count 1))
-(cffi:defctype #.(lispify "gcry_md_hd_t" 'type) :pointer)
-(cffi:defcstruct #.(lispify "gcry_buffer_t" 'type)
-  (size :size)
-  (off :size)
-  (len :size)
-  (buf :pointer))
-
 ;; algos enum
 (defenum
   #.(lispify "GCRY_MD_NONE" 'enumvalue)
@@ -51,13 +38,32 @@
   #.(lispify "GCRY_MD_BLAKE2S_256" 'enumvalue)
   #.(lispify "GCRY_MD_BLAKE2S_224" 'enumvalue)
   #.(lispify "GCRY_MD_BLAKE2S_160" 'enumvalue)
-  #.(lispify "GCRY_MD_BLAKE2S_128" 'enumvalue))
+  #.(lispify "GCRY_MD_BLAKE2S_128" 'enumvalue)
+  #.(lispify "GCRY_MD_SM3" 'enumvalue)
+  #.(lispify "GCRY_MD_SHA512_256" 'enumvalue)
+  #.(lispify "GCRY_MD_SHA512_224" 'enumvalue))
 
 (defenum
   (#.(lispify "GCRY_MD_FLAG_SECURE" 'enumvalue) 1)
   #.(lispify "GCRY_MD_FLAG_HMAC" 'enumvalue)
   (#.(lispify "GCRY_MD_FLAG_BUGEMU1" 'enumvalue) #x0100))
 
+;; types and structs
+(cffi:defcstruct #.(lispify "gcry_md_handle" 'type)
+  (ctx :pointer)
+  (bufpos :int)
+  (bufsize :int)
+  (buf :char :count 1))
+
+(cffi:defctype #.(lispify "gcry_md_hd_t" 'type) :pointer)
+
+(cffi:defcstruct #.(lispify "gcry_buffer_t" 'type)
+  (size :size)
+  (off :size)
+  (len :size)
+  (buf :pointer))
+
+;; functions
 (cffi:defcfun #.(namify-function-definition "gcry_md_open")
     #.(lispify "gcry_error_t" 'type)
   #.(format nil
@@ -93,6 +99,14 @@ ALGO may be given as 0 if the algorithms to be used are later set using ~a"
   "Reset the digest object HANDLE to its initial state."
   (handle #.(lispify "gcry_md_hd_t" 'type)))
 
+(cffi:defcfun #.(namify-function-definition "gcry_md_ctl")
+    #.(lispify "gcry_error_t" 'type)
+  "Perform various operations on the digest object HANDLE"
+  (handle #.(lispify "gcry_md_hd_t" 'type))
+  (cmd :int)
+  (buffer :pointer)
+  (buflen :size))
+
 (cffi:defcfun #.(namify-function-definition "gcry_md_write")
     :void
   "Pass LENGTH bytes of data in BUFFER 
@@ -109,6 +123,17 @@ it can update the digest values. This is the actual hash function."
   (handle #.(lispify "gcry_md_hd_t" 'type))
   (algo :int))
 
+(cffi:defcfun
+    #.(namify-function-definition "gcry_md_extract")
+  #.(lispify "gcry_error_t" 'type)
+  "Read more output from algorithm ALGO to BUFFER
+of size LENGTH from digest object HANDLE.
+ Algorithm needs to be 'expendable-output function'"
+  (handle #.(lispify "gcry_md_hd_t" 'type))
+  (algo :int)
+  (buffer :pointer)
+  (length :size))
+
 (cffi:defcfun #.(namify-function-definition "gcry_md_hash_buffer")
     :void
   "Convenience function to 
@@ -122,6 +147,15 @@ of the given algorithm."
   (digest :pointer)
   (buffer :pointer)
   (length :size))
+
+(cffi:defcfun #.(namify-function-definition "gcry_md_hash_buffers")
+  #.(lispify "gcry_error_t" 'type)
+  "Convenience function to hash multiple buffers."
+  (algo :int)
+  (flags :uint)
+  (digest :pointer)
+  (iov :pointer #.(lispify "gcry_buffer_t" 'type))
+  (iovcnt :int))
 
 (cffi:defcfun #.(namify-function-definition "gcry_md_get_algo")
     :int
@@ -149,6 +183,25 @@ is enabled in the digest object HANDLE."
  is allocated in \"secure\" memory."
   (handle #.(lispify "gcry_md_hd_t" 'type)))
 
+(cffi:defcfun #.(namify-function-definition "gcry_md_info")
+  #.(lispify "gcry_error_t" 'type)
+  #.(format nil
+	    "Deprecated: Use ~a or ~a."
+	    (namify-function "gcry_md_is_enabled")
+	    (namify-function "gcry_md_is_secure"))
+  (handle #.(lispify "gcry_md_hd_t" 'type))
+  (what :int)
+  (buffer :pointer)
+  (nbytes :pointer :size))
+
+(cffi:defcfun #.(namify-function-definition "gcry_md_algo_info")
+    #.(lispify "gcry_error_t" 'type)
+  "Retrieve various information about the algorithm ALGO"
+  (algo :int)
+  (what :int)
+  (buffer :pointer)
+  (nbytes (:pointer :size)))
+
 (cffi:defcfun #.(namify-function-definition "gcry_md_algo_name")
     :string
   "Map the digest algorithm id ALGO
@@ -170,13 +223,39 @@ the set MAC key to the KEY of KEYLEN bytes."
   (key :pointer)
   (size :size))
 
-(cffi:defcfun #.(namify-function-definition "gcry_md_algo_info")
-    #.(lispify "gcry_error_t" 'type)
-  "Retrieve various information about the algorithm ALGO"
-  (algo :int)
-  (what :int)
-  (buffer :pointer)
-  (nbytes (:pointer :size)))
+(cffi:defcfun #.(namify-function-definition "gcry_md_debug")
+  :void
+  "Start or stop debugging for digest handle HANDLE;
+i.e. create a file named dbgmd-<n>.<suffix> while hashing.
+If SUFFIX is NULL, debugging stops and the file will be closed."
+  (handle #.(lispify "gcry_md_hd_t" 'type))
+  (suffix :string))
+
+(defun #.(namify-function "gcry_md_putc") (handle char)
+  #.(format nil
+	    "Update the hash(s) of HANDLE with the character CHAR.
+  This is a buffered version of the ~a function."
+	    (namify-function "gcry_md_write"))
+  (cffi:with-foreign-slots
+      ((bufpos bufsize)
+       handle
+       (:struct #.(lispify "gcry_md_handle" 'type)))
+    (when (= bufpos bufsize)
+      (#.(namify-function "gcry_md_write") handle (cffi:null-pointer) 0))
+    (let ((buf (cffi:foreign-slot-pointer handle '(:struct #.(lispify "gcry_md_handle" 'type)) 'buf)))
+      (setf (cffi:mem-aref buf :char bufpos) char)
+      (incf bufpos))))
+
+(defun #.(namify-function "gcry_md_final") (handle)
+  #.(format nil
+	    "Finalize the digest calculation.
+ This is not really needed because ~a does this implicitly"
+	    (namify-function "gcry_md_read"))
+  (#.(namify-function "gcry_md_ctl")
+     handle
+     #.(lispify "GCRYCTL_FINALIZE" 'enumvalue)
+     (cffi:null-pointer)
+     0))
 
 (defun #.(namify-function "gcry_md_test_algo")
   (algo)
@@ -197,76 +276,3 @@ After return it will receive the actual size of the returned OID"
      #.(lispify "GCRYCTL_GET_ASNOID" 'enumvalue)
      buffer
      nbytes))
-
-(cffi:defcfun #.(namify-function-definition "gcry_md_ctl")
-    #.(lispify "gcry_error_t" 'type)
-  "Perform various operations on the digest object HANDLE"
-  (handle #.(lispify "gcry_md_hd_t" 'type))
-  (cmd :int)
-  (buffer :pointer)
-  (buflen :size))
-
-(defun #.(namify-function "gcry_md_final") (handle)
-  #.(format nil
-	    "Finalize the digest calculation.
- This is not really needed because ~a does this implicitly"
-	    (namify-function "gcry_md_read"))
-  (#.(namify-function "gcry_md_ctl")
-     handle
-     #.(lispify "GCRYCTL_FINALIZE" 'enumvalue)
-     (cffi:null-pointer)
-     0))
-
-(defun #.(namify-function "gcry_md_putc") (handle char)
-  #.(format nil
-	    "Update the hash(s) of HANDLE with the character CHAR.
-  This is a buffered version of the ~a function."
-	    (namify-function "gcry_md_write"))
-  (cffi:with-foreign-slots
-      ((bufpos bufsize)
-       handle
-       (:struct #.(lispify "gcry_md_handle" 'type)))
-    (when (= bufpos bufsize)
-      (#.(namify-function "gcry_md_write") handle (cffi:null-pointer) 0))
-    (let ((buf (cffi:foreign-slot-pointer handle '(:struct #.(lispify "gcry_md_handle" 'type)) 'buf)))
-      (setf (cffi:mem-aref buf :char bufpos) char)
-      (incf bufpos))))
-
-(cffi:defcfun #.(namify-function-definition "gcry_md_debug")
-  :void
-  "Start or stop debugging for digest handle HANDLE;
-i.e. create a file named dbgmd-<n>.<suffix> while hashing.
-If SUFFIX is NULL, debugging stops and the file will be closed."
-  (handle #.(lispify "gcry_md_hd_t" 'type))
-  (suffix :string))
-
-(cffi:defcfun #.(namify-function-definition "gcry_md_info")
-  #.(lispify "gcry_error_t" 'type)
-  #.(format nil
-	    "Deprecated: Use ~a or ~a."
-	    (namify-function "gcry_md_is_enabled")
-	    (namify-function "gcry_md_is_secure"))
-  (handle #.(lispify "gcry_md_hd_t" 'type))
-  (what :int)
-  (buffer :pointer)
-  (nbytes :pointer :size))
-
-(cffi:defcfun
-    #.(namify-function-definition "gcry_md_extract")
-  #.(lispify "gcry_error_t" 'type)
-  "Read more output from algorithm ALGO to BUFFER
-of size LENGTH from digest object HANDLE.
- Algorithm needs to be 'expendable-output function'"
-  (handle #.(lispify "gcry_md_hd_t" 'type))
-  (algo :int)
-  (buffer :pointer)
-  (length :size))
-
-(cffi:defcfun #.(namify-function-definition "gcry_md_hash_buffers")
-  #.(lispify "gcry_error_t" 'type)
-  "Convenience function to hash multiple buffers."
-  (algo :int)
-  (flags :uint)
-  (digest :pointer)
-  (iov :pointer #.(lispify "gcry_buffer_t" 'type))
-  (iovcnt :int))
