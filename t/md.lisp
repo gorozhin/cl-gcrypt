@@ -95,7 +95,12 @@
    (+gcry-md-blake-2-s-256+ "a6d8c508ae9badf542f646e7cbdd9080946a7417314ee1022e72c997b9d21aaf")
    (+gcry-md-blake-2-s-224+ "5f297cf66ac5cad9dc3c81b8922a4c6b79f8fd04a0a402054e9a03cf")
    (+gcry-md-blake-2-s-160+ "6806a27aca24eb897e3608d4744177d3be88990c")
-   (+gcry-md-blake-2-s-128+ "1eb752c0295d7a8d9c7a78745c643c73")))
+   (+gcry-md-blake-2-s-128+ "1eb752c0295d7a8d9c7a78745c643c73")
+   ;; prep for 1.9 version that's not available on ubuntu runner
+   ;; (+gcry-md-sm-3+ "f072dc24030762ff74aa2cd38a645e7c3f41378814078019ff8ca4e5473ea380")
+   ;; (+gcry-md-sha-512-224+ "b17e9100bd47710919f63881fdc1a7faaefc54a253d3c1948be5d8e6")
+   ;; (+gcry-md-sha-512-256+ "239337abfc8a43300bbb4e17072280c87719a29047b8f0a02ae4b7656be5f1a3")
+   ))
 
 (test simple-hash-secure-memory
   (perform-simple-hash-test-cases

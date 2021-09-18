@@ -33,6 +33,26 @@
   #.(lispify "GCRY_CIPHER_GOST28147_MESH" 'enumvalue)
   #.(lispify "GCRY_CIPHER_SM4" 'enumvalue))
 
+(defconstant
+    #.(lispify "GCRY_CIPHER_AES128" 'enumvalue)
+  #.(lispify "GCRY_CIPHER_AES" 'enumvalue))
+
+(defconstant
+    #.(lispify "GCRY_CIPHER_RIJNDAEL" 'enumvalue)
+  #.(lispify "GCRY_CIPHER_AES" 'enumvalue))
+
+(defconstant
+    #.(lispify "GCRY_CIPHER_RIJNDAEL128" 'enumvalue)
+  #.(lispify "GCRY_CIPHER_AES128" 'enumvalue))
+
+(defconstant
+    #.(lispify "GCRY_CIPHER_RIJNDAEL192" 'enumvalue)
+  #.(lispify "GCRY_CIPHER_AES192" 'enumvalue))
+
+(defconstant
+    #.(lispify "GCRY_CIPHER_RIJNDAEL256" 'enumvalue)
+  #.(lispify "GCRY_CIPHER_AES256" 'enumvalue))
+
 (defenum
   #.(lispify "GCRY_CIPHER_MODE_NONE" 'enumvalue)
   #.(lispify "GCRY_CIPHER_MODE_ECB" 'enumvalue)
