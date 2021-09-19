@@ -6,7 +6,8 @@
 (defun run-tests ()
   (let ((suites
 	  (list (intern* 'cl-gcrypt-cipher-suite '#:cl-gcrypt-test)
-		(intern* 'cl-gcrypt-md-suite '#:cl-gcrypt-test))))
+		(intern* 'cl-gcrypt-md-suite '#:cl-gcrypt-test)
+		(intern* 'cl-gcrypt-sexp-suite '#:cl-gcrypt-test))))
     (when (not (reduce
 		#'(lambda (x y) (and x y))
 		(loop for suite in suites
@@ -26,7 +27,8 @@
 	       :components
 	       ((:file "cl-gcrypt-test")
 		(:file "md" :depends-on ("cl-gcrypt-test"))
-		(:file "cipher-test" :depends-on ("cl-gcrypt-test")))))
+		(:file "cipher-test" :depends-on ("cl-gcrypt-test"))
+		(:file "sexp-test" :depends-on ("cl-gcrypt-test")))))
   :perform (test-op (o c)
 		    (run-tests)))
 

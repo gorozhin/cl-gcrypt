@@ -13,6 +13,12 @@
 		 (:file "md-export" :depends-on ("md-binding" "helper"))
 		 (:file "cipher-binding" :depends-on ("cl-gcrypt" "helper"))
 		 (:file "cipher-export" :depends-on ("cipher-binding" "helper"))
+		 (:file "mpi-binding" :depends-on ("cl-gcrypt" "helper"))
+		 (:file "mpi-export" :depends-on ("mpi-binding" "helper"))
+		 (:file "sexp-binding" :depends-on ("mpi-binding"
+						    "cl-gcrypt"
+						    "helper"))
+		 (:file "sexp-export" :depends-on ("sexp-binding" "helper"))
 		 (:file "cl-gcrypt" :depends-on ("helper"))
 		 (:file "helper"))))
   :description "Common Lisp bindings for libgcrypt")
