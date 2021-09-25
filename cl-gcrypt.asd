@@ -19,6 +19,10 @@
 						    "cl-gcrypt"
 						    "helper"))
 		 (:file "sexp-export" :depends-on ("sexp-binding" "helper"))
+		 (:file "pk-binding" :depends-on ("sexp-binding"
+						  "cl-gcrypt"
+						  "helper"))
+		 (:file "pk-export" :depends-on ("pk-binding" "helper"))
 		 (:file "cl-gcrypt" :depends-on ("helper"))
 		 (:file "helper"))))
   :description "Common Lisp bindings for libgcrypt")

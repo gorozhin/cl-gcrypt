@@ -10,6 +10,8 @@
 
 (cffi:use-foreign-library libgcrypt)
 
+(cffi:defctype #.(lispify "gcry_ctx_t" 'type) :pointer)
+
 (cffi:defctype #.(lispify "gcry_error_t" 'type) :uint)
 (export '#.(lispify "gcry_error_t" 'type))
 
