@@ -11,3 +11,4 @@
 (export '#.(lispify "GCRYMPI_FMT_OPAQUE" 'enumvalue))
 
 (export '#.(namify-function "gcry_mpi_print"))
+(export '#.(namify-function "gcry_mpi_release"))

@@ -685,7 +685,10 @@
 	   		  mpi-3)
 	  (is (string= (foreign-buffer-to-string mpi-buffer
 						 (mem-aref written :uint))
-		       mpi-3-hex-representation)))))
+		       mpi-3-hex-representation))
+	  (gcry-mpi-release mpi-1)
+	  (gcry-mpi-release mpi-2)
+	  (gcry-mpi-release mpi-3))))
     (foreign-free foreign-buffer)
     (foreign-free error-position)
     (foreign-free written)

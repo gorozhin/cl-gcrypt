@@ -23,3 +23,8 @@ has been passed as NULL."
   (buflen :uint)
   (nwritten :pointer)
   (a #.(lispify "gcry_mpi_t" 'type)))
+
+(cffi:defcfun #.(namify-function-definition "gcry_mpi_release")
+  :void
+  "Release the number A and free all associated resources."
+  (a #.(lispify "gcry_mpi_t" 'type)))
