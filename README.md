@@ -11,5 +11,6 @@ For usage examples head towards tests in `t/`, for documentation refer to the or
 It have been tested on 1.8-1.9 versions of libgcrypt, though it can ocassionaly work on others as well.
 
 # Installation
+Install from [Ultralisp](https://ultralisp.org/projects/gorozhin/cl-gcrypt "Ultralisp")
 
-Drop the source of the library to an ASDF discoverable location and list it as dependency in system's `.asd` file.
+For manual installation drop the source of the library to an ASDF discoverable location and list it as dependency in system's `.asd` file.
